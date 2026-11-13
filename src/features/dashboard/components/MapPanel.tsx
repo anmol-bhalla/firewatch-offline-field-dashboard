@@ -25,7 +25,7 @@ export default function MapPanel() {
         <div className="map-controls"><button aria-label="Zoom in (map not connected)" disabled><Plus size={15} /></button><button aria-label="Zoom out (map not connected)" disabled><Minus size={15} /></button><button aria-label="Center map (map not connected)" disabled><Crosshair size={15} /></button></div>
         <div className="map-placeholder-note"><MapPin size={14} /> Mapbox map will appear here</div>
       </div>
-      <div className="map-legend"><span><i className="legend-dot critical" />High severity</span><span><i className="legend-dot moderate" />Moderate</span><span><i className="legend-dot low" />Low severity</span><span className="map-region">Greater Victoria, BC <span>·</span> 48.4284° N, 123.3656° W</span></div>
+      <div className="map-legend"><span><i className="legend-dot critical" />High severity</span><span><i className="legend-dot moderate" />Medium severity</span><span><i className="legend-dot low" />Low severity</span><span className="map-region">Greater Victoria, BC <span>·</span> 48.4284° N, 123.3656° W</span></div>
     </section>
   )
 }

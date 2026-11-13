@@ -1,4 +1,6 @@
 import { Activity, ChevronDown, CircleHelp, Flame, Layers2, Map, Settings2, ShieldCheck } from 'lucide-react'
+import { useAppSelector } from '../../../app/hooks'
+import { selectObservations } from '../../observations/selectors'
 
 const navigation = [
   { label: 'Overview', icon: Map, active: true },
@@ -7,6 +9,8 @@ const navigation = [
 ]
 
 export default function Sidebar() {
+  const observationCount = useAppSelector(selectObservations).length
+
   return (
     <aside className="sidebar">
       <a className="brand" href="#overview" aria-label="FireWatch home">
@@ -28,7 +32,7 @@ export default function Sidebar() {
           </a>
         ) : (
           <span key={label} className="nav-link unavailable">
-            <Icon size={17} strokeWidth={1.8} /><span>{label}</span>{label === 'Observations' && <span className="nav-count">12</span>}
+            <Icon size={17} strokeWidth={1.8} /><span>{label}</span>{label === 'Observations' && <span className="nav-count">{observationCount}</span>}
           </span>
         ))}
       </nav>
