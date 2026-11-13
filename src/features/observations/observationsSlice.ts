@@ -6,11 +6,13 @@ import type { NewObservationInput, Observation, ObservationChanges, ObservationF
 type ObservationsState = {
   items: Observation[]
   filters: ObservationFilters
+  selectedObservationId: string | null
 }
 
 const initialState: ObservationsState = {
   items: mockObservations,
   filters: { category: 'All', severity: 'All' },
+  selectedObservationId: null,
 }
 
 const observationsSlice = createSlice({
@@ -38,6 +40,10 @@ const observationsSlice = createSlice({
     },
     deleteObservation(state, action: PayloadAction<string>) {
       state.items = state.items.filter((item) => item.id !== action.payload)
+      if (state.selectedObservationId === action.payload) state.selectedObservationId = null
+    },
+    setSelectedObservation(state, action: PayloadAction<string | null>) {
+      state.selectedObservationId = action.payload
     },
     setObservationFilters(state, action: PayloadAction<Partial<ObservationFilters>>) {
       Object.assign(state.filters, action.payload)
@@ -52,6 +58,7 @@ export const {
   addObservation,
   editObservation,
   deleteObservation,
+  setSelectedObservation,
   setObservationFilters,
   clearObservationFilters,
 } = observationsSlice.actions

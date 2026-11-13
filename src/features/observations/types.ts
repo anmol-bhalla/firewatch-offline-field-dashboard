@@ -19,6 +19,8 @@ export type Observation = {
   syncStatus: SyncStatus
 }
 
+export type ObservationCoordinates = Pick<Observation, 'latitude' | 'longitude'>
+
 export type NewObservationInput = Pick<
   Observation,
   'title' | 'category' | 'severity' | 'description' | 'latitude' | 'longitude'
