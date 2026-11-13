@@ -1,6 +1,6 @@
 # FireWatch
 
-FireWatch is a field operations dashboard foundation for wildfire observation workflows. This phase provides a responsive React dashboard shell with static preview data; observation management, persistence, maps, and offline behavior are not implemented yet.
+FireWatch is a field operations dashboard foundation for wildfire observation workflows. Observation CRUD, filtering, and dashboard metrics are managed in Redux Toolkit. State is held in memory and resets to the preview observations on reload; persistence, maps, and offline behavior are not implemented yet.
 
 ## Run locally
 
@@ -16,6 +16,7 @@ Vite prints the local development URL in the terminal. To check the production b
 ```sh
 npm run build
 npm run lint
+npm test
 ```
 
 ## Project structure
@@ -23,10 +24,12 @@ npm run lint
 ```text
 src/
   app/                         # App composition
-  features/dashboard/           # Dashboard page, reusable sections, and preview data
-    components/
-    data/
+  features/
+    dashboard/                  # Dashboard page and reusable sections
+    observations/               # Observation model, Redux slice, selectors, and form
+      components/
+      data/                     # Typed initial preview observations
   styles/                       # Global styles and Tailwind entry point
 ```
 
-The Mapbox map area is an illustrative placeholder. Summary values and observation rows are static preview data in `src/features/dashboard/data/mockObservations.ts` and dashboard components; controls without an implemented action are disabled or presented as static content.
+The observation list and summary cards read from Redux. The initial rows live in `src/features/observations/data/mockObservations.ts`. The Mapbox area remains an illustrative placeholder; observations are not persisted and reset to the preview data after reload.
