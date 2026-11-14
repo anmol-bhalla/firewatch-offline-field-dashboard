@@ -91,7 +91,7 @@ const observations: Observation[] = [
   {
     id: 'FW-2', title: 'Warm ground patch', category: 'Hotspot', severity: 'Medium',
     description: 'Thermal hotspot found during patrol.', latitude: 48.5, longitude: -123.5,
-    createdAt: '2026-11-13T16:00:00.000Z', updatedAt: '2026-11-13T16:00:00.000Z', syncStatus: 'Synced',
+    createdAt: '2026-11-13T16:00:00.000Z', updatedAt: '2026-11-13T16:00:00.000Z', syncStatus: 'Simulated',
   },
 ]
 

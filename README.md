@@ -1,6 +1,6 @@
 # FireWatch
 
-FireWatch is a field operations dashboard foundation for wildfire observation workflows. Observation CRUD, filtering, and dashboard metrics are managed in Redux Toolkit. State is held in memory and resets to the preview observations on reload; persistence, maps, and offline behavior are not implemented yet.
+FireWatch is an offline-first field operations dashboard for wildfire observations. Redux Toolkit coordinates the UI state and asynchronous actions; a Dexie repository persists observation changes in IndexedDB before Redux is updated. Preview observations are seeded only the first time the database is created.
 
 ## Run locally
 
@@ -13,7 +13,16 @@ cp .env.example .env
 npm run dev
 ```
 
-Vite prints the local development URL in the terminal. To check the production bundle and lint the source:
+To verify the production build and its PWA shell, build and serve it over localhost:
+
+```sh
+npm run build
+npm run preview
+```
+
+The service worker and installable app manifest are generated for production builds. Load the preview once while online, then try disconnecting the browser to verify that the application shell launches from cache. Browser developer tools can also clear the service worker and site data when retesting first install.
+
+Useful checks:
 
 ```sh
 npm run build
@@ -25,13 +34,20 @@ npm test
 
 ```text
 src/
-  app/                         # App composition
+  app/                         # Store setup, typed hooks, app composition, browser status
   features/
-    dashboard/                  # Dashboard page and reusable sections
-    observations/               # Observation model, Redux slice, selectors, and form
-      components/
-      data/                     # Typed initial preview observations
+    dashboard/                  # Dashboard page and reusable dashboard components
+    observations/               # Model, Redux reducers/thunks/selectors, forms, preview fixtures
+  services/
+    db/                         # Dexie schema and observation repository
   styles/                       # Global styles and Tailwind entry point
+public/icons/                   # FireWatch app icon
 ```
 
-The observation list and summary cards read from Redux. The initial rows live in `src/features/observations/data/mockObservations.ts`. The map uses Mapbox GL JS and public hosted styles/tiles; it requires a network connection and does not work offline. Without a token, the map panel explains how to configure one and observations can still be entered with manual coordinates. Observation changes remain in memory and reset to the preview rows after reload.
+## Offline and synchronization behavior
+
+Observations and their `Pending`/`Simulated` status persist locally in IndexedDB. The “Run demo sync” action only changes pending local records to `Simulated` (shown as “Demo complete”); it does not contact a server or upload data. The online/offline indicator reflects the browser's connection hint.
+
+The PWA service worker precaches the built application shell and static assets. It does not cache Mapbox tiles or observation records. Mapbox requires an internet connection and may be blank/unavailable offline; observation management remains available from the cached application shell and IndexedDB. The app uses no backend. Local hard deletion currently removes an observation directly; a future server sync will need a deletion outbox/tombstone design.
+
+If the Mapbox token is missing, the map panel explains how to configure it and observations can still be managed using coordinates.

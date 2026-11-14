@@ -249,6 +249,22 @@ a{
   padding-right:17px;
   border-right:1px solid #e6eaf0
 }
+.network-pill.online{color:#37815f}
+.network-pill.offline{color:#bf5946}
+.demo-sync-button{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  border:1px solid #dfe4eb;
+  border-radius:6px;
+  padding:6px 9px;
+  background:#fff;
+  color:#526174;
+  font:600 10px 'DM Sans',sans-serif;
+  white-space:nowrap
+}
+.demo-sync-button:hover:not(:disabled){background:#f5f7f9}
+.demo-sync-button:disabled{opacity:.55;cursor:not-allowed}
 .network-pill .live-dot{
   width:6px;
   height:6px
@@ -781,6 +797,8 @@ tbody tr:last-child td{
 .sync-status.synced i{
   background:#57ae8e
 }
+.sync-status.simulated{color:#56a083}
+.sync-status.simulated i{background:#57ae8e}
 .row-menu{
   display:grid;
   place-items:center;
@@ -987,7 +1005,10 @@ tbody tr:last-child td{
   .topbar-actions{
   gap:4px
 }
-  .network-pill{display:none}
+  .network-pill{font-size:0;border:0;padding:0}
+  .network-pill svg{width:16px;height:16px}
+  .demo-sync-button{font-size:0;padding:7px}
+  .demo-sync-button svg{width:16px;height:16px}
   .date-label{font-size:8px;letter-spacing:.7px}
   .summary-note{font-size:7px}
   .summary-bottom{gap:7px}
@@ -1140,6 +1161,52 @@ tbody tr:last-child td{
   margin:0 0 12px;
   color:#bf5946;
   font-size:10px;
+}
+.storage-error{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin:0 12px 10px;
+  padding:9px 10px;
+  border:1px solid #f1d1cb;
+  border-radius:6px;
+  background:#fff8f6;
+  color:#a84334;
+  font-size:10px
+}
+.hydration-message{
+  margin:0 0 12px;
+  padding:9px 11px;
+  border:1px solid #dce5ed;
+  border-radius:6px;
+  background:#f8fafc;
+  color:#526174;
+  font-size:11px
+}
+.pwa-notice{
+  position:fixed;
+  z-index:100;
+  right:18px;
+  bottom:18px;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:12px 14px;
+  border:1px solid #d8e0e9;
+  border-radius:8px;
+  background:#fff;
+  box-shadow:0 8px 30px #10203924;
+  color:#35455b;
+  font-size:12px
+}
+.pwa-notice button{
+  border:0;
+  border-radius:5px;
+  background:#18314b;
+  color:#fff;
+  padding:7px 10px;
+  font:600 11px 'DM Sans',sans-serif
 }
 .dialog-actions{
   display:flex;

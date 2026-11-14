@@ -4,7 +4,7 @@ export type ObservationCategory = (typeof observationCategories)[number]
 export const observationSeverities = ['Low', 'Medium', 'High'] as const
 export type ObservationSeverity = (typeof observationSeverities)[number]
 
-export type SyncStatus = 'Pending' | 'Synced'
+export type SyncStatus = 'Pending' | 'Simulated'
 
 export type Observation = {
   id: string

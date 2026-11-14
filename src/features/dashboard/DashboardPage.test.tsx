@@ -1,10 +1,12 @@
-import { configureStore } from '@reduxjs/toolkit'
 import { Provider } from 'react-redux'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, expect, it, vi } from 'vitest'
 import DashboardPage from './DashboardPage'
-import observationsReducer from '../observations/observationsSlice'
+import { createAppStore } from '../../app/store'
+import { hydrateObservations } from '../observations/observationsSlice'
+import { mockObservations } from '../observations/data/mockObservations'
+import type { ObservationRepository } from '../../services/db/observationRepository'
 import type { Observation, ObservationCoordinates } from '../observations/types'
 
 type MockObservationMapProps = {
@@ -22,8 +24,21 @@ vi.mock('../map/ObservationMap', () => ({
   ),
 }))
 
-function renderDashboard() {
-  const store = configureStore({ reducer: { observations: observationsReducer } })
+async function renderDashboard() {
+  const rows = new Map(mockObservations.map((item) => [item.id, structuredClone(item)]))
+  const repository: ObservationRepository = {
+    getAll: async () => [...rows.values()],
+    add: async (item) => { rows.set(item.id, item) },
+    update: async (item) => { rows.set(item.id, item) },
+    delete: async (id) => { rows.delete(id) },
+    markPendingAsSimulated: async () => {
+      const updated = [...rows.values()].filter((item) => item.syncStatus === 'Pending').map((item) => ({ ...item, syncStatus: 'Simulated' as const }))
+      updated.forEach((item) => rows.set(item.id, item))
+      return updated
+    },
+  }
+  const store = createAppStore(repository)
+  await store.dispatch(hydrateObservations())
   const user = userEvent.setup()
   render(<Provider store={store}><DashboardPage /></Provider>)
   return { store, user }
@@ -31,7 +46,7 @@ function renderDashboard() {
 
 describe('dashboard observation management', () => {
   it('creates an observation and updates the table and summary', async () => {
-    const { user } = renderDashboard()
+    const { user } = await renderDashboard()
     await user.click(screen.getByRole('button', { name: 'New observation' }))
     await user.type(screen.getByLabelText('Title'), 'Smoke at Mount Wells')
     await user.selectOptions(screen.getByLabelText('Observation category'), 'Smoke')
@@ -47,7 +62,7 @@ describe('dashboard observation management', () => {
   })
 
   it('shows a validation message for an invalid coordinate', async () => {
-    const { user } = renderDashboard()
+    const { user } = await renderDashboard()
     await user.click(screen.getByRole('button', { name: 'New observation' }))
     await user.type(screen.getByLabelText('Title'), 'Invalid coordinate report')
     await user.type(screen.getByLabelText('Description'), 'Coordinate outside allowed range.')
@@ -59,7 +74,7 @@ describe('dashboard observation management', () => {
   })
 
   it('requires a title and description before saving', async () => {
-    const { user } = renderDashboard()
+    const { user } = await renderDashboard()
     await user.click(screen.getByRole('button', { name: 'New observation' }))
     await user.click(screen.getByRole('button', { name: 'Add observation' }))
 
@@ -68,7 +83,7 @@ describe('dashboard observation management', () => {
   })
 
   it('edits an existing observation from its row', async () => {
-    const { user } = renderDashboard()
+    const { user } = await renderDashboard()
     await user.click(screen.getByRole('button', { name: 'Edit Smoke column observed' }))
     const title = screen.getByLabelText('Title')
     await user.clear(title)
@@ -81,7 +96,7 @@ describe('dashboard observation management', () => {
 
   it('deletes an observation only after confirmation', async () => {
     vi.spyOn(window, 'confirm').mockReturnValue(true)
-    const { user } = renderDashboard()
+    const { user } = await renderDashboard()
     await user.click(screen.getByRole('button', { name: 'Delete Smoke column observed' }))
 
     expect(window.confirm).toHaveBeenCalledOnce()
@@ -90,7 +105,7 @@ describe('dashboard observation management', () => {
   })
 
   it('filters rows and clears the selected filters', async () => {
-    const { user } = renderDashboard()
+    const { user } = await renderDashboard()
     await user.selectOptions(screen.getByLabelText('Filter by category'), 'Fire')
     expect(screen.getByText('Unattended campfire')).toBeInTheDocument()
     expect(screen.queryByText('Smoke column observed')).not.toBeInTheDocument()
@@ -104,14 +119,14 @@ describe('dashboard observation management', () => {
   })
 
   it('selects the corresponding observation when a map marker is clicked', async () => {
-    const { user } = renderDashboard()
+    const { user } = await renderDashboard()
     await user.click(screen.getByRole('button', { name: 'Map marker Smoke column observed' }))
 
     expect(screen.getByText('Smoke column observed').closest('tr')).toHaveClass('selected-observation-row')
   })
 
   it('fills the create form with coordinates selected from the map', async () => {
-    const { user } = renderDashboard()
+    const { user } = await renderDashboard()
     await user.click(screen.getByRole('button', { name: 'Choose map coordinates' }))
     await user.click(screen.getByRole('button', { name: 'New observation' }))
 
