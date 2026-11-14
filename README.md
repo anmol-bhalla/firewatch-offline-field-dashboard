@@ -8,9 +8,9 @@ The application is a **prototype using sample observations**, not an operational
 
 ## Preview
 
-![FireWatch dashboard overview](docs/screenshots/dashboard-overview.png)
+![FireWatch dashboard overview](public/screenshots/dashboard-overview.png)
 
-*Interactive observation map, summary metrics, and field reports.*
+_Interactive observation map, summary metrics, and field reports._
 
 ## Features
 
@@ -26,33 +26,33 @@ The application is a **prototype using sample observations**, not an operational
 
 ### Observation management
 
-![Observation form](docs/screenshots/create-observation.png)
+![Observation form](public/screenshots/create-observation.png)
 
-*Create a geolocated observation with a category, severity, description, and coordinates.*
+_Create a geolocated observation with a category, severity, description, and coordinates._
 
 ### Map interaction
 
-![Map observation selection](docs/screenshots/map-observation-selection.png)
+![Map observation selection](public/screenshots/map-observation-selection.png)
 
-*Select an observation to inspect its location and details.*
+_Select an observation to inspect its location and details._
 
 ### Offline workflow
 
-![FireWatch offline](docs/screenshots/offline-mode.png)
+![FireWatch offline](public/screenshots/offline-mode.png)
 
-*Previously cached application assets and locally stored observations remain accessible without connectivity. Mapbox tiles are not available offline.*
+_Previously cached application assets and locally stored observations remain accessible without connectivity. Mapbox tiles are not available offline._
 
 ## Tech stack
 
-| Area | Technologies |
-|---|---|
-| Frontend | React, TypeScript, Vite |
-| UI | Tailwind CSS, Lucide |
-| State management | Redux Toolkit, React Redux |
-| Mapping | Mapbox GL JS |
-| Local persistence | Dexie, IndexedDB |
-| Offline support | Vite PWA Plugin, Workbox |
-| Testing | Vitest, React Testing Library, fake-indexeddb |
+| Area              | Technologies                                  |
+| ----------------- | --------------------------------------------- |
+| Frontend          | React, TypeScript, Vite                       |
+| UI                | Tailwind CSS, Lucide                          |
+| State management  | Redux Toolkit, React Redux                    |
+| Mapping           | Mapbox GL JS                                  |
+| Local persistence | Dexie, IndexedDB                              |
+| Offline support   | Vite PWA Plugin, Workbox                      |
+| Testing           | Vitest, React Testing Library, fake-indexeddb |
 
 ## Getting started
 

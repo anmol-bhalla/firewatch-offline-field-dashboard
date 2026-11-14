@@ -41,7 +41,7 @@ export default function Sidebar() {
         <div className="sidebar-status"><span className="live-dot" /><span><strong>Demo workspace</strong><small>Static preview data</small></span></div>
         <span className="nav-link unavailable"><CircleHelp size={17} /><span>Help & resources</span></span>
         <span className="nav-link unavailable"><Settings2 size={17} /><span>Settings</span></span>
-        <div className="user-profile"><div className="profile-avatar">JM</div><span><strong>Jordan Miller</strong><small>Field coordinator</small></span><ChevronDown size={15} className="muted-icon" /></div>
+        <div className="user-profile"><div className="profile-avatar">AB</div><span><strong>Anmol Bhalla</strong><small>Field coordinator</small></span><ChevronDown size={15} className="muted-icon" /></div>
       </div>
     </aside>
   )
