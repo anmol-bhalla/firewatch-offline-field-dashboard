@@ -5,6 +5,22 @@ import userEvent from '@testing-library/user-event'
 import { describe, expect, it, vi } from 'vitest'
 import DashboardPage from './DashboardPage'
 import observationsReducer from '../observations/observationsSlice'
+import type { Observation, ObservationCoordinates } from '../observations/types'
+
+type MockObservationMapProps = {
+  observations: Observation[]
+  onObservationSelect: (id: string) => void
+  onLocationSelect: (coordinates: ObservationCoordinates) => void
+}
+
+vi.mock('../map/ObservationMap', () => ({
+  default: ({ observations, onObservationSelect, onLocationSelect }: MockObservationMapProps) => (
+    <div data-testid="mock-observation-map">
+      {observations.map((observation) => <button key={observation.id} type="button" onClick={() => onObservationSelect(observation.id)}>Map marker {observation.title}</button>)}
+      <button type="button" onClick={() => onLocationSelect({ latitude: 48.5, longitude: -123.5 })}>Choose map coordinates</button>
+    </div>
+  ),
+}))
 
 function renderDashboard() {
   const store = configureStore({ reducer: { observations: observationsReducer } })
@@ -85,5 +101,26 @@ describe('dashboard observation management', () => {
 
     expect(screen.getByText('Smoke column observed')).toBeInTheDocument()
     expect(screen.getByText('Unattended campfire')).toBeInTheDocument()
+  })
+
+  it('selects the corresponding observation when a map marker is clicked', async () => {
+    const { user } = renderDashboard()
+    await user.click(screen.getByRole('button', { name: 'Map marker Smoke column observed' }))
+
+    expect(screen.getByText('Smoke column observed').closest('tr')).toHaveClass('selected-observation-row')
+  })
+
+  it('fills the create form with coordinates selected from the map', async () => {
+    const { user } = renderDashboard()
+    await user.click(screen.getByRole('button', { name: 'Choose map coordinates' }))
+    await user.click(screen.getByRole('button', { name: 'New observation' }))
+
+    expect(screen.getByLabelText('Latitude')).toHaveValue(48.5)
+    expect(screen.getByLabelText('Longitude')).toHaveValue(-123.5)
+    await user.type(screen.getByLabelText('Title'), 'Report from selected point')
+    await user.type(screen.getByLabelText('Description'), 'Smoke visible from the map-selected location.')
+    await user.click(screen.getByRole('button', { name: 'Add observation' }))
+
+    expect(screen.getByText('48.5000, -123.5000')).toBeInTheDocument()
   })
 })

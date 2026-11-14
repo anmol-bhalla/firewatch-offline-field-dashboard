@@ -3,7 +3,7 @@ import { CalendarDays, Plus } from 'lucide-react'
 import { useAppDispatch } from '../../app/hooks'
 import { addObservation } from '../observations/observationsSlice'
 import ObservationForm from '../observations/components/ObservationForm'
-import type { NewObservationInput } from '../observations/types'
+import type { NewObservationInput, ObservationCoordinates } from '../observations/types'
 import Sidebar from './components/Sidebar'
 import TopBar from './components/TopBar'
 import SummaryCards from './components/SummaryCards'
@@ -13,10 +13,12 @@ import ObservationList from './components/ObservationList'
 export default function DashboardPage() {
   const dispatch = useAppDispatch()
   const [isCreating, setIsCreating] = useState(false)
+  const [selectedCoordinates, setSelectedCoordinates] = useState<ObservationCoordinates | null>(null)
 
   function handleCreate(observation: NewObservationInput) {
     dispatch(addObservation(observation))
     setIsCreating(false)
+    setSelectedCoordinates(null)
   }
 
   return (
@@ -30,10 +32,13 @@ export default function DashboardPage() {
             <div className="page-actions"><span className="date-button"><CalendarDays size={15} /><span>Last 7 days</span></span><button className="primary-button" type="button" onClick={() => setIsCreating(true)}><Plus size={17} />New observation</button></div>
           </div>
           <SummaryCards />
-          <div className="dashboard-grid"><MapPanel /><ObservationList /></div>
+          <div className="dashboard-grid">
+            <MapPanel selectedCoordinates={selectedCoordinates} onLocationSelect={setSelectedCoordinates} />
+            <ObservationList onCreateObservation={() => setIsCreating(true)} />
+          </div>
           <footer className="dashboard-footer"><span>FireWatch Field Operations</span><span>Regional coordination dashboard <i /> Pacific Region</span></footer>
         </div>
-        {isCreating && <ObservationForm onCancel={() => setIsCreating(false)} onSave={handleCreate} />}
+        {isCreating && <ObservationForm initialCoordinates={selectedCoordinates} onCancel={() => setIsCreating(false)} onSave={handleCreate} />}
       </main>
     </div>
   )

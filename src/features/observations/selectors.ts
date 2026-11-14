@@ -3,6 +3,7 @@ import type { RootState } from '../../app/store'
 
 export const selectObservations = (state: RootState) => state.observations.items
 export const selectObservationFilters = (state: RootState) => state.observations.filters
+export const selectSelectedObservationId = (state: RootState) => state.observations.selectedObservationId
 
 export const selectFilteredObservations = createSelector(
   [selectObservations, selectObservationFilters],

@@ -8,6 +8,8 @@ Requires Node.js 20 or newer and npm.
 
 ```sh
 npm install
+cp .env.example .env
+# Set VITE_MAPBOX_ACCESS_TOKEN in .env to a public Mapbox token
 npm run dev
 ```
 
@@ -32,4 +34,4 @@ src/
   styles/                       # Global styles and Tailwind entry point
 ```
 
-The observation list and summary cards read from Redux. The initial rows live in `src/features/observations/data/mockObservations.ts`. The Mapbox area remains an illustrative placeholder; observations are not persisted and reset to the preview data after reload.
+The observation list and summary cards read from Redux. The initial rows live in `src/features/observations/data/mockObservations.ts`. The map uses Mapbox GL JS and public hosted styles/tiles; it requires a network connection and does not work offline. Without a token, the map panel explains how to configure one and observations can still be entered with manual coordinates. Observation changes remain in memory and reset to the preview rows after reload.

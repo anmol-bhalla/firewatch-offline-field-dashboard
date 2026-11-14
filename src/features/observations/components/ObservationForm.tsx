@@ -1,20 +1,21 @@
 import { useState, type FormEvent } from 'react'
 import { X } from 'lucide-react'
-import { observationCategories, observationSeverities, type NewObservationInput, type Observation } from '../types'
+import { observationCategories, observationSeverities, type NewObservationInput, type Observation, type ObservationCoordinates } from '../types'
 
 type ObservationFormProps = {
   observation?: Observation
+  initialCoordinates?: ObservationCoordinates | null
   onCancel: () => void
   onSave: (observation: NewObservationInput) => void
 }
 
-export default function ObservationForm({ observation, onCancel, onSave }: ObservationFormProps) {
+export default function ObservationForm({ observation, initialCoordinates, onCancel, onSave }: ObservationFormProps) {
   const [title, setTitle] = useState(observation?.title ?? '')
   const [category, setCategory] = useState<NewObservationInput['category']>(observation?.category ?? 'Smoke')
   const [severity, setSeverity] = useState<NewObservationInput['severity']>(observation?.severity ?? 'Low')
   const [description, setDescription] = useState(observation?.description ?? '')
-  const [latitude, setLatitude] = useState(observation ? String(observation.latitude) : '')
-  const [longitude, setLongitude] = useState(observation ? String(observation.longitude) : '')
+  const [latitude, setLatitude] = useState(observation ? String(observation.latitude) : initialCoordinates ? String(initialCoordinates.latitude) : '')
+  const [longitude, setLongitude] = useState(observation ? String(observation.longitude) : initialCoordinates ? String(initialCoordinates.longitude) : '')
   const [error, setError] = useState('')
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -72,6 +73,7 @@ export default function ObservationForm({ observation, onCancel, onSave }: Obser
               <input name="longitude" type="number" min="-180" max="180" step="any" value={longitude} onChange={(event) => setLongitude(event.target.value)} required placeholder="-123.3656" />
             </label>
           </div>
+          {!observation && initialCoordinates && <p className="map-coordinate-note">Coordinates filled from the selected map location.</p>}
           {error && <p className="form-error" role="alert">{error}</p>}
           <div className="dialog-actions"><button type="button" className="dialog-cancel" onClick={onCancel}>Cancel</button><button type="submit" className="primary-button">{observation ? 'Save changes' : 'Add observation'}</button></div>
         </form>
