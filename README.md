@@ -1,53 +1,145 @@
 # FireWatch
 
-FireWatch is an offline-first field operations dashboard for wildfire observations. Redux Toolkit coordinates the UI state and asynchronous actions; a Dexie repository persists observation changes in IndexedDB before Redux is updated. Preview observations are seeded only the first time the database is created.
+**An offline-first wildfire observation dashboard — a full-stack-oriented frontend learning project exploring geospatial interfaces, local persistence, and connectivity-constrained workflows.**
 
-## Run locally
+FireWatch is a personal portfolio project I built to get hands-on experience with **Mapbox GL JS, Dexie, IndexedDB, and offline-first application architecture**. Inspired by the software challenges involved in wildfire field operations, it explores how observations can be recorded, visualized, and managed when network connectivity is unreliable.
 
-Requires Node.js 20 or newer and npm.
+The application is a **prototype using sample observations**, not an operational wildfire monitoring or emergency response system.
 
-```sh
+## Preview
+
+![FireWatch dashboard overview](docs/screenshots/dashboard-overview.png)
+
+*Interactive observation map, summary metrics, and field reports.*
+
+## Features
+
+- **Interactive observation map:** View geolocated reports as severity-coded Mapbox markers, select observations, and choose coordinates directly from the map.
+- **Observation management:** Create, edit, delete, and filter reports by category and severity.
+- **Offline-first persistence:** Store observations locally using Dexie and IndexedDB, with data surviving page reloads.
+- **Redux Toolkit state management:** Hydrate saved observations on startup and persist changes before updating application state.
+- **PWA support:** Cache the production application shell and static assets for subsequent offline launches.
+- **Connectivity and demo synchronization:** Display browser online/offline status and simulate synchronization locally, without contacting a backend.
+- **Automated testing:** Cover observation logic, persistence, dashboard interactions, and key UI behavior using Vitest and React Testing Library.
+
+## Screenshots
+
+### Observation management
+
+![Observation form](docs/screenshots/create-observation.png)
+
+*Create a geolocated observation with a category, severity, description, and coordinates.*
+
+### Map interaction
+
+![Map observation selection](docs/screenshots/map-observation-selection.png)
+
+*Select an observation to inspect its location and details.*
+
+### Offline workflow
+
+![FireWatch offline](docs/screenshots/offline-mode.png)
+
+*Previously cached application assets and locally stored observations remain accessible without connectivity. Mapbox tiles are not available offline.*
+
+## Tech stack
+
+| Area | Technologies |
+|---|---|
+| Frontend | React, TypeScript, Vite |
+| UI | Tailwind CSS, Lucide |
+| State management | Redux Toolkit, React Redux |
+| Mapping | Mapbox GL JS |
+| Local persistence | Dexie, IndexedDB |
+| Offline support | Vite PWA Plugin, Workbox |
+| Testing | Vitest, React Testing Library, fake-indexeddb |
+
+## Getting started
+
+Requires Node.js 20+ and npm.
+
+```bash
+git clone https://github.com/anmol-bhalla/firewatch-offline-field-dashboard.git
+cd firewatch-offline-field-dashboard
 npm install
 cp .env.example .env
-# Set VITE_MAPBOX_ACCESS_TOKEN in .env to a public Mapbox token
+```
+
+Add a public Mapbox access token to `.env`:
+
+```env
+VITE_MAPBOX_ACCESS_TOKEN=pk.your_public_mapbox_access_token
+```
+
+Start the development server:
+
+```bash
 npm run dev
 ```
 
-To verify the production build and its PWA shell, build and serve it over localhost:
+The application can manage observations without a Mapbox token, but the interactive map requires a valid token and an internet connection.
 
-```sh
+## Testing and production preview
+
+```bash
+npm test
+npm run lint
 npm run build
 npm run preview
 ```
 
-The service worker and installable app manifest are generated for production builds. Load the preview once while online, then try disconnecting the browser to verify that the application shell launches from cache. Browser developer tools can also clear the service worker and site data when retesting first install.
+To test offline functionality, open the production preview once while online, allow the application assets to cache, then disconnect from the network and reload.
 
-Useful checks:
+Offline availability depends on the service worker having installed and cached the required assets successfully.
 
-```sh
-npm run build
-npm run lint
-npm test
-```
-
-## Project structure
+## Architecture
 
 ```text
 src/
-  app/                         # Store setup, typed hooks, app composition, browser status
-  features/
-    dashboard/                  # Dashboard page and reusable dashboard components
-    observations/               # Model, Redux reducers/thunks/selectors, forms, preview fixtures
-  services/
-    db/                         # Dexie schema and observation repository
-  styles/                       # Global styles and Tailwind entry point
-public/icons/                   # FireWatch app icon
+├── app/                   # Redux store, app composition, PWA and connectivity
+├── features/
+│   ├── dashboard/         # Dashboard UI and observation table
+│   ├── map/               # Mapbox map, markers and selection
+│   └── observations/      # Types, selectors, Redux logic and forms
+├── services/
+│   └── db/                # Dexie database and repository
+└── styles/                # Application styles
 ```
 
-## Offline and synchronization behavior
+**Persistence flow**
 
-Observations and their `Pending`/`Simulated` status persist locally in IndexedDB. The “Run demo sync” action only changes pending local records to `Simulated` (shown as “Demo complete”); it does not contact a server or upload data. The online/offline indicator reflects the browser's connection hint.
+1. The app loads existing observations from IndexedDB into Redux.
+2. A user creates, edits, or deletes an observation.
+3. An asynchronous action writes the change to IndexedDB.
+4. Redux is updated after the storage operation succeeds.
+5. If loading or writing fails, the application displays an error instead of presenting an unpersisted change as successful.
 
-The PWA service worker precaches the built application shell and static assets. It does not cache Mapbox tiles or observation records. Mapbox requires an internet connection and may be blank/unavailable offline; observation management remains available from the cached application shell and IndexedDB. The app uses no backend. Local hard deletion currently removes an observation directly; a future server sync will need a deletion outbox/tombstone design.
+Sample observations are seeded only when the local database is first created.
 
-If the Mapbox token is missing, the map panel explains how to configure it and observations can still be managed using coordinates.
+## Current limitations
+
+FireWatch is intentionally scoped as a learning MVP.
+
+- **No backend or real synchronization:** “Run demo sync” only changes local observation statuses to “Demo complete.”
+- **No offline Mapbox tiles:** The application shell and observation data are available offline after caching, but map rendering requires connectivity.
+- **No live wildfire data:** The application uses sample and user-created observations.
+- **Local-only deletion:** Deleted observations are removed from IndexedDB; a future remote sync implementation would require an outbox or tombstones.
+- **Device-local data:** Observations are stored in the browser and are not shared between devices.
+
+## What I learned
+
+This project gave me practical experience with:
+
+- Designing a repository boundary between persistent storage and UI state.
+- Handling asynchronous hydration, storage failures, and data consistency.
+- Integrating an interactive map with application state.
+- Understanding the difference between an offline-capable application shell and offline geospatial data.
+- Testing persistence behavior independently of UI components.
+
+## Future improvements
+
+Potential extensions include a backend synchronization API, a durable operation outbox, conflict resolution, and offline map-region support.
+
+---
+
+**Project status:** Learning MVP / portfolio prototype.
