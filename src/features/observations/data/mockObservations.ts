@@ -23,7 +23,7 @@ export const mockObservations: Observation[] = [
     longitude: -123.5598,
     createdAt: '2026-11-13T17:18:00.000Z',
     updatedAt: '2026-11-13T17:18:00.000Z',
-    syncStatus: 'Synced',
+    syncStatus: 'Simulated',
   },
   {
     id: 'FW-2479',
@@ -35,7 +35,7 @@ export const mockObservations: Observation[] = [
     longitude: -123.4681,
     createdAt: '2026-11-13T16:56:00.000Z',
     updatedAt: '2026-11-13T16:56:00.000Z',
-    syncStatus: 'Synced',
+    syncStatus: 'Simulated',
   },
   {
     id: 'FW-2478',

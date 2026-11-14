@@ -6,7 +6,7 @@ type ObservationFormProps = {
   observation?: Observation
   initialCoordinates?: ObservationCoordinates | null
   onCancel: () => void
-  onSave: (observation: NewObservationInput) => void
+  onSave: (observation: NewObservationInput) => Promise<void>
 }
 
 export default function ObservationForm({ observation, initialCoordinates, onCancel, onSave }: ObservationFormProps) {
@@ -17,8 +17,9 @@ export default function ObservationForm({ observation, initialCoordinates, onCan
   const [latitude, setLatitude] = useState(observation ? String(observation.latitude) : initialCoordinates ? String(initialCoordinates.latitude) : '')
   const [longitude, setLongitude] = useState(observation ? String(observation.longitude) : initialCoordinates ? String(initialCoordinates.longitude) : '')
   const [error, setError] = useState('')
+  const [isSaving, setIsSaving] = useState(false)
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
     const parsedLatitude = Number(latitude)
     const parsedLongitude = Number(longitude)
@@ -36,7 +37,15 @@ export default function ObservationForm({ observation, initialCoordinates, onCan
       return
     }
 
-    onSave({ title: title.trim(), category, severity, description: description.trim(), latitude: parsedLatitude, longitude: parsedLongitude })
+    setIsSaving(true)
+    setError('')
+    try {
+      await onSave({ title: title.trim(), category, severity, description: description.trim(), latitude: parsedLatitude, longitude: parsedLongitude })
+    } catch (saveError) {
+      setError(saveError instanceof Error ? saveError.message : 'The observation could not be saved. Please try again.')
+    } finally {
+      setIsSaving(false)
+    }
   }
 
   return (
@@ -75,7 +84,7 @@ export default function ObservationForm({ observation, initialCoordinates, onCan
           </div>
           {!observation && initialCoordinates && <p className="map-coordinate-note">Coordinates filled from the selected map location.</p>}
           {error && <p className="form-error" role="alert">{error}</p>}
-          <div className="dialog-actions"><button type="button" className="dialog-cancel" onClick={onCancel}>Cancel</button><button type="submit" className="primary-button">{observation ? 'Save changes' : 'Add observation'}</button></div>
+          <div className="dialog-actions"><button type="button" className="dialog-cancel" onClick={onCancel} disabled={isSaving}>Cancel</button><button type="submit" className="primary-button" disabled={isSaving}>{isSaving ? 'Saving…' : observation ? 'Save changes' : 'Add observation'}</button></div>
         </form>
       </section>
     </div>
