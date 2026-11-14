@@ -6,7 +6,7 @@ import { VitePWA } from 'vite-plugin-pwa'
 export default defineConfig({
   plugins: [react(), tailwindcss(), VitePWA({
     registerType: 'prompt',
-    includeAssets: ['icons/firewatch.svg'],
+    includeAssets: ['icons/firewatch.svg', 'icons/firewatch-192.png', 'icons/firewatch-512.png'],
     manifest: {
       name: 'FireWatch Field Operations',
       short_name: 'FireWatch',
@@ -16,10 +16,14 @@ export default defineConfig({
       display: 'standalone',
       start_url: '/',
       scope: '/',
-      icons: [{ src: '/icons/firewatch.svg', sizes: 'any', type: 'image/svg+xml', purpose: 'any maskable' }],
+      icons: [
+        { src: '/icons/firewatch-192.png', sizes: '192x192', type: 'image/png', purpose: 'any maskable' },
+        { src: '/icons/firewatch-512.png', sizes: '512x512', type: 'image/png', purpose: 'any maskable' },
+        { src: '/icons/firewatch.svg', sizes: 'any', type: 'image/svg+xml', purpose: 'any maskable' },
+      ],
     },
     workbox: {
-      globPatterns: ['**/*.{js,css,html,svg,woff2}'],
+      globPatterns: ['**/*.{js,css,html,png,svg,woff2}'],
       navigateFallback: 'index.html',
       runtimeCaching: [],
     },

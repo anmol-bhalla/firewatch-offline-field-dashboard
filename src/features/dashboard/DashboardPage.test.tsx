@@ -45,6 +45,20 @@ async function renderDashboard() {
 }
 
 describe('dashboard observation management', () => {
+  it('shows the current date and labels the unfiltered demo dataset honestly', async () => {
+    await renderDashboard()
+    const today = new Intl.DateTimeFormat('en-US', {
+      weekday: 'long',
+      month: 'long',
+      day: 'numeric',
+      year: 'numeric',
+    }).format(new Date()).toUpperCase()
+
+    expect(screen.getByText('All dates · demo dataset')).toBeInTheDocument()
+    expect(screen.queryByText('Last 7 days')).not.toBeInTheDocument()
+    expect(screen.getByText((_, element) => element?.classList.contains('date-label') ?? false)).toHaveTextContent(today)
+  })
+
   it('creates an observation and updates the table and summary', async () => {
     const { user } = await renderDashboard()
     await user.click(screen.getByRole('button', { name: 'New observation' }))

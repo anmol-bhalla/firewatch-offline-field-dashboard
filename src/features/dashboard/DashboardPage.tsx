@@ -12,6 +12,12 @@ import ObservationList from './components/ObservationList'
 
 export default function DashboardPage() {
   const dispatch = useAppDispatch()
+  const today = new Intl.DateTimeFormat('en-US', {
+    weekday: 'long',
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric',
+  }).format(new Date()).toUpperCase()
   const hydrationStatus = useAppSelector((state) => state.observations.hydrationStatus)
   const hydrationError = useAppSelector((state) => state.observations.hydrationError)
   const observationsReady = hydrationStatus === 'ready'
@@ -31,8 +37,8 @@ export default function DashboardPage() {
         <TopBar />
         <div className="dashboard-content">
           <div className="page-heading">
-            <div><div className="date-label"><span className="date-pip" /> FRIDAY, NOVEMBER 13, 2026 <span className="date-divider">·</span> DEMO PREVIEW</div><h1>Field overview</h1><p>Monitor wildfire observations across your response area.</p></div>
-            <div className="page-actions"><span className="date-button"><CalendarDays size={15} /><span>Last 7 days</span></span><button className="primary-button" type="button" disabled={!observationsReady} onClick={() => setIsCreating(true)}><Plus size={17} />New observation</button></div>
+            <div><div className="date-label"><span className="date-pip" /> {today} <span className="date-divider">·</span> DEMO PREVIEW</div><h1>Field overview</h1><p>Monitor wildfire observations across your response area.</p></div>
+            <div className="page-actions"><span className="date-button" title="No date filter is applied"><CalendarDays size={15} /><span>All dates · demo dataset</span></span><button className="primary-button" type="button" disabled={!observationsReady} onClick={() => setIsCreating(true)}><Plus size={17} />New observation</button></div>
           </div>
           {hydrationStatus === 'loading' && <p className="hydration-message" role="status">Loading saved observations…</p>}
           {hydrationError && <div className="storage-error" role="alert"><span>{hydrationError}</span><button type="button" className="clear-filters" disabled={hydrationStatus === 'loading'} onClick={() => { void dispatch(hydrateObservations()) }}>Retry loading</button></div>}
